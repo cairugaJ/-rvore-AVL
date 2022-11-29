@@ -38,13 +38,23 @@ public class AVL {
     //Construtor
     public AVL(){}
 
+    /**
+     * Retorna a altura da arvore
+     * @param N nodo do qual é pesquisada a altura
+     * @return a altura do nodo
+     */
+    
+    public int height() {
+        return height(root);
+    }
+
     private int height (Node N) {
         if (N == null)
             return 0;
         return N.height;
     }
 
-    private Node add(Integer elem) {
+    public void add(Integer elem) {
         /* 1.  Perform the normal BST rotation */
         Node node = new Node(elem);
         
@@ -64,28 +74,26 @@ public class AVL {
 
         // Left Left Case
         if (balance > 1 && elem < node.left.elem)
-            return rightRotate(node);
+            rightRotate(node);
 
         // Right Right Case
         if (balance < -1 && elem > node.right.elem)
-            return leftRotate(node);
+            leftRotate(node);
 
         // Left Right Case
         if (balance > 1 && elem > node.left.elem)
         {
             node.left =  leftRotate(node.left);
-            return rightRotate(node);
+            rightRotate(node);
         }
 
         // Right Left Case
         if (balance < -1 && elem < node.right.elem)
         {
             node.right = rightRotate(node.right);
-            return leftRotate(node);
+            leftRotate(node);
         }
 
-        /* return the (unchanged) node pointer */
-        return node;
     }
 
     private Node rightRotate(Node y) {
