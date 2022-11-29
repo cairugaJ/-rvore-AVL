@@ -1,7 +1,8 @@
+
 /**
  *
  * Classe da Árvore AVL
- * @author João Enrique Rego Cairuga
+ * @author João Enrique Rego Cairuga e Gabriele Colares Severino
  * @version 2022-11-19
  */
 public class AVL {
@@ -11,9 +12,66 @@ public class AVL {
 
     private Nodo raiz = null;
 
+     /**
+     *
+     * Classe Nodo
+     * @author  João Enrique Rego Cairuga
+     * @version 2022-11-19
+     */
+    private static final class Nodo{
+        //Atributos
+        public Nodo pai;
+
+        public Nodo filhoD;
+
+        public Nodo filhoE;
+
+        public int height;
+
+        public Integer elem;
+
+        private int balan; //Checa se o nodo está balanceado
+
+        //Construtor
+        public Nodo(Integer elem){
+            pai = null;
+            filhoD = null;
+            filhoE = null;
+            this.elem = elem;
+            balan = 0;
+            int height;
+        }
+    }
 
     //Construtor
     public AVL(){}
+
+    
+    /**
+     * Adiciona elemento na arvore
+     * @param element elemento a ser adicionado
+     */
+    public void add(int element) {
+        Nodo aux = searchNodeRef(element, raiz);
+
+        
+    }
+    
+    /**
+     * altura da arvore
+     * @return o numero da altura da arvore
+     */
+    public int height() {
+        return 1;
+    }
+
+    /**
+     * Clona uma arvore
+     * @return o clone da arvore
+     */
+    public AVL clone() {
+        return;
+    }
 
     //Getters
     /**
@@ -59,9 +117,6 @@ public class AVL {
         return (teste != null);
     }
 
-
-
-
     /**
      * Busca nodo contendo o element a partir do nodo alvo
      * @param element
@@ -86,33 +141,10 @@ public class AVL {
 
     }
 
+    private int height(Nodo node) {
+        return node != null ? node.height : -1;
+      }
 
 
-    /**
-     *
-     * Classe Nodo
-     * @author  João Enrique Rego Cairuga
-     * @version 2022-11-19
-     */
-    private static final class Nodo{
-        //Atributos
-        public Nodo pai;
-
-        public Nodo filhoD;
-
-        public Nodo filhoE;
-
-        public Integer elem;
-
-        private int balan; //Checa se o nodo está balanceado
-
-        //Construtor
-        public Nodo(Integer elem){
-            pai = null;
-            filhoD = null;
-            filhoE = null;
-            this.elem = elem;
-            balan = 0;
-        }
-    }
+   
 }
