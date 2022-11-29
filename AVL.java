@@ -25,13 +25,14 @@ public class AVL {
         public Node left;
         public Node right;
         public Integer elem;
-        public int height = 1;
+        public int bf;
 
         public Node(Integer elem) {
             father = null;
             left = null;
             right = null;
             this.elem = elem;
+            this.bf = 0;
         }
     }
 
@@ -44,104 +45,131 @@ public class AVL {
      * @return a altura do nodo
      */
     
-    public int height() {
-        return height(root);
-    }
 
-    private int height (Node N) {
-        if (N == null)
-            return 0;
-        return N.height;
-    }
-
-    public void add(Integer elem) {
-        /* 1.  Perform the normal BST rotation */
-        Node node = new Node(elem);
+    //public int height() {
         
-        if (elem < node.elem)
-            node.left.elem  = elem;
-        else
-            node.right.elem = elem;
+    //}
 
-        /* 2. Update height of this ancestor node */
-        node.height = Math.max(height(node.left), height(node.right)) + 1;
 
-        /* 3. Get the balance factor of this ancestor node to check whether
-           this node became unbalanced */
-        int balance = getBalance(node);
 
-        // If this node becomes unbalanced, then there are 4 cases
+    	// update the balance factor the node
+	private void updateBalance(Node node) {
+		if (node.bf < -1 || node.bf > 1) {
+			rebalance(node);
+			return;
+		}
 
-        // Left Left Case
-        if (balance > 1 && elem < node.left.elem)
-            rightRotate(node);
+		if (node.father != null) {
+			if (node == node.father.left) {
+				node.father.bf -= 1;
+			} 
 
-        // Right Right Case
-        if (balance < -1 && elem > node.right.elem)
-            leftRotate(node);
+			if (node == node.father.right) {
+				node.father.bf += 1;
+			}
 
-        // Left Right Case
-        if (balance > 1 && elem > node.left.elem)
-        {
-            node.left =  leftRotate(node.left);
-            rightRotate(node);
-        }
+			if (node.father.bf != 0) {
+				updateBalance(node.father);
+			}
+		}
+	}
 
-        // Right Left Case
-        if (balance < -1 && elem < node.right.elem)
-        {
-            node.right = rightRotate(node.right);
-            leftRotate(node);
-        }
+	// rebalance the tree
+	private void rebalance(Node node) {
+		if (node.bf > 0) {
+			if (node.right.bf < 0) {
+				rightRotate(node.right);
+				leftRotate(node);
+			} else {
+				leftRotate(node);
+			}
+		} else if (node.bf < 0) {
+			if (node.left.bf > 0) {
+				leftRotate(node.left);
+				rightRotate(node);
+			} else {
+				rightRotate(node);
+			}
+		}
+	}
 
-    }
+	// rotate left at node x
+	private void leftRotate(Node x) {
+		Node y = x.right;
+		x.right = y.left;
+		if (y.left != null) {
+			y.left.father = x;
+		}
+		y.father = x.father;
+		if (x.father == null) {
+			this.root = y;
+		} else if (x == x.father.left) {
+			x.father.left = y;
+		} else {
+			x.father.right = y;
+		}
+		y.left = x;
+		x.father = y;
 
-    private Node rightRotate(Node y) {
-        Node x = y.left;
-        Node T2 = x.right;
+		// update the balance factor
+		x.bf = x.bf - 1 - Math.max(0, y.bf);
+		y.bf = y.bf - 1 + Math.min(0, x.bf);
+	}
 
-        // Perform rotation
-        x.right = y;
-        y.left = T2;
+	// rotate right at node x
+	private void rightRotate(Node x) {
+		Node y = x.left;
+		x.left = y.right;
+		if (y.right != null) {
+			y.right.father = x;
+		}
+		y.father = x.father;
+		if (x.father == null) {
+			this.root = y;
+		} else if (x == x.father.right) {
+			x.father.right = y;
+		} else {
+			x.father.left = y;
+		}
+		y.right = x;
+		x.father = y;
 
-        // Update heights
-        y.height = Math.max(height(y.left), height(y.right))+1;
-        x.height = Math.max(height(x.left), height(x.right))+1;
+		// update the balance factor
+		x.bf = x.bf + 1 - Math.min(0, y.bf);
+		y.bf = y.bf + 1 + Math.max(0, x.bf);
+	}
 
-        // Return new root
-        return x;
-    }
 
-    private Node leftRotate(Node x) {
-        Node y = x.right;
-        Node T2 = y.left;
+	// insert the key to the tree in its appropriate position
+	public void add(int key) {
+		// PART 1: Ordinary BST insert
+		Node node = new Node(key);
+		Node y = null;
+		Node x = this.root;
 
-        // Perform rotation
-        y.left = x;
-        x.right = T2;
+		while (x != null) {
+			y = x;
+			if (node.elem < x.elem) {
+				x = x.left;
+			} else {
+				x = x.right;
+			}
+		}
 
-        //  Update heights
-        x.height = Math.max(height(x.left), height(x.right))+1;
-        y.height = Math.max(height(y.left), height(y.right))+1;
+		// y is father of x
+		node.father = y;
+		if (y == null) {
+			root = node;
+		} else if (node.elem < y.elem) {
+			y.left = node;
+		} else {
+			y.right = node;
+		}
 
-        // Return new root
-        return y;
-    }
-
-    // Get Balance factor of node N
-    private int getBalance(Node N) {
-        if (N == null)
-            return 0;
-        return height(N.left) - height(N.right);
-    }
-
-    public void preOrder(Node root) {
-        if (root != null) {
-            preOrder(root.left);
-            System.out.printf("%d ", root.elem);
-            preOrder(root.right);
-        }
-    }
+		// PART 2: re-balance the node if necessary
+		updateBalance(node);
+        count++;
+	}
 
     //Getters
     /**
@@ -239,7 +267,7 @@ public class AVL {
         }
     }
 
-    public LinkedList positionsCentral() {
+    public LinkedList<Integer> positionsCentral() {
         LinkedList<Integer> res = new LinkedList<Integer>();
         positionsCentralAux(root, res);
         return res;
