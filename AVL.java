@@ -26,6 +26,7 @@ public class AVL {
         public Node right;
         public Integer elem;
         public int bf;
+        public int height;
 
         public Node(Integer elem) {
             father = null;
@@ -33,6 +34,7 @@ public class AVL {
             right = null;
             this.elem = elem;
             this.bf = 0;
+            this.height = 1;
         }
     }
 
@@ -50,6 +52,21 @@ public class AVL {
         
     //}
 
+    public int height() {
+        return height(root);
+    }
+
+    int height(Node N) {
+        if (N == null)
+            return 0;
+ 
+        return N.height;
+    }
+ 
+    // A utility function to get maximum of two integers
+    int max(int a, int b) {
+        return (a > b) ? a : b;
+    }
 
 
     	// update the balance factor the node
@@ -114,6 +131,10 @@ public class AVL {
 		// update the balance factor
 		x.bf = x.bf - 1 - Math.max(0, y.bf);
 		y.bf = y.bf - 1 + Math.min(0, x.bf);
+
+        // update the heights
+        x.height = max(height(x.left), height(x.right)) + 1;
+        y.height = max(height(y.left), height(y.right)) + 1;
 	}
 
 	// rotate right at node x
@@ -137,11 +158,15 @@ public class AVL {
 		// update the balance factor
 		x.bf = x.bf + 1 - Math.min(0, y.bf);
 		y.bf = y.bf + 1 + Math.max(0, x.bf);
+
+        // update the height
+        y.height = max(height(y.left), height(y.right)) + 1;
+        x.height = max(height(x.left), height(x.right)) + 1;
 	}
 
 
 	// insert the elem to the tree in its appropriate position
-	public void add(int elem) {
+	public void add(int elem) { //O(log n)
 		// PART 1: Ordinary BST insert
 		Node node = new Node(elem);
 		Node y = null;
@@ -165,6 +190,8 @@ public class AVL {
 		} else {
 			y.right = node;
 		}
+
+        node.height = 1 + max(height(node.left), height(node.right));
 
 		// PART 2: re-balance the node if necessary
 		updateBalance(node);
@@ -301,7 +328,7 @@ public class AVL {
         return res;
     }
 
-    public AVL clone() {
+    public AVL clone() { // O(log n)
         AVL tree = new AVL();
         clone(root, tree);
         return tree;

@@ -32,9 +32,9 @@ public class Main {
         teste.add(8);
         teste.add(9);
 
-        //System.out.println("Altura da arvore: " + teste.height());
+        System.out.println("Altura da arvore: " + teste.height());
 
-        teste.GeraDOT();
+       teste.GeraDOT();
 
         teste.clear();
 
@@ -53,6 +53,8 @@ public class Main {
         for (int i = 0; i < camCentral.size(); i++) {
             System.out.print(camCentral.get(i) + ", ");
         }
+
+        System.out.println();
 
         AVL clone = teste.clone();
 
