@@ -52,7 +52,7 @@ public class AVL {
         
     //}
 
-    public int height() {
+    public int height() { //O(log n)
         return height(root);
     }
 
