@@ -140,10 +140,10 @@ public class AVL {
 	}
 
 
-	// insert the key to the tree in its appropriate position
-	public void add(int key) {
+	// insert the elem to the tree in its appropriate position
+	public void add(int elem) {
 		// PART 1: Ordinary BST insert
-		Node node = new Node(key);
+		Node node = new Node(elem);
 		Node y = null;
 		Node x = this.root;
 

@@ -15,10 +15,10 @@ public class Main {
          • Apresentar a altura da árvore; x
          • Chamar o método “geraDot()” para a árvore; x
          • Limpar o conteúdo da árvore; x
-         • Incluir os números 9,8,7,6,5,4,3,2,1, nesta ordem, na árvore;
-         • Apresentar o conteúdo da árvore usando um caminhamento central;
-         • Retornar um clone da árvore;
-         • Chamar o método “geraDot()” para o clone da árvore
+         • Incluir os números 9,8,7,6,5,4,3,2,1, nesta ordem, na árvore; x
+         • Apresentar o conteúdo da árvore usando um caminhamento central; x
+         • Retornar um clone da árvore; x
+         • Chamar o método “geraDot()” para o clone da árvore x
          */
         AVL teste = new AVL();
 
