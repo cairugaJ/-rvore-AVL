@@ -191,8 +191,6 @@ public class AVL {
 			y.right = node;
 		}
 
-        node.height = 1 + max(height(node.left), height(node.right));
-
 		// PART 2: re-balance the node if necessary
 		updateBalance(node);
         count++;
