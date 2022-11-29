@@ -1,77 +1,138 @@
-import org.w3c.dom.Node;
+import java.util.LinkedList;
 
 /**
  *
  * Classe da Árvore AVL
  * @author João Enrique Rego Cairuga e Gabriele Colares Severino
- * @version 2022-11-19
+ * @version 2022-11-28
  */
 public class AVL {
 
     //Atributos
     private int count = 0;
 
-    private Node raiz = null;
+    private Node root = null;
 
      /**
-     *
      * Classe Nodo
      * @author  João Enrique Rego Cairuga
      * @version 2022-11-19
      */
-    private static final class Node{
-        //Atributos
-        public Node pai;
+    
+    private static final class Node {
 
-        public Node filhoD;
-
-        public Node filhoE;
-
-        public int height;
-
+        public Node father;
+        public Node left;
+        public Node right;
         public Integer elem;
+        public int height = 1;
 
-        private int balan; //Checa se o nodo está balanceado
-
-        //Construtor
-        public Node(Integer elem){
-            pai = null;
-            filhoD = null;
-            filhoE = null;
+        public Node(Integer elem) {
+            father = null;
+            left = null;
+            right = null;
             this.elem = elem;
-            balan = 0;
-            int height;
         }
     }
 
     //Construtor
     public AVL(){}
 
-    
-    /**
-     * Adiciona elemento na arvore
-     * @param element elemento a ser adicionado
-     */
-    public void add(int element) {
-        Node aux = new Node(element);
-        
-        
-    }
-    
-    /**
-     * altura da arvore
-     * @return o numero da altura da arvore
-     */
-    public int height() {
-        return 1;
+    private int height (Node N) {
+        if (N == null)
+            return 0;
+        return N.height;
     }
 
-    /**
-     * Clona uma arvore
-     * @return o clone da arvore
-     */
-    public AVL clone() {
-        return;
+    private Node add(Integer elem) {
+        /* 1.  Perform the normal BST rotation */
+        Node node = new Node(elem);
+        
+        if (elem < node.elem)
+            node.left.elem  = elem;
+        else
+            node.right.elem = elem;
+
+        /* 2. Update height of this ancestor node */
+        node.height = Math.max(height(node.left), height(node.right)) + 1;
+
+        /* 3. Get the balance factor of this ancestor node to check whether
+           this node became unbalanced */
+        int balance = getBalance(node);
+
+        // If this node becomes unbalanced, then there are 4 cases
+
+        // Left Left Case
+        if (balance > 1 && elem < node.left.elem)
+            return rightRotate(node);
+
+        // Right Right Case
+        if (balance < -1 && elem > node.right.elem)
+            return leftRotate(node);
+
+        // Left Right Case
+        if (balance > 1 && elem > node.left.elem)
+        {
+            node.left =  leftRotate(node.left);
+            return rightRotate(node);
+        }
+
+        // Right Left Case
+        if (balance < -1 && elem < node.right.elem)
+        {
+            node.right = rightRotate(node.right);
+            return leftRotate(node);
+        }
+
+        /* return the (unchanged) node pointer */
+        return node;
+    }
+
+    private Node rightRotate(Node y) {
+        Node x = y.left;
+        Node T2 = x.right;
+
+        // Perform rotation
+        x.right = y;
+        y.left = T2;
+
+        // Update heights
+        y.height = Math.max(height(y.left), height(y.right))+1;
+        x.height = Math.max(height(x.left), height(x.right))+1;
+
+        // Return new root
+        return x;
+    }
+
+    private Node leftRotate(Node x) {
+        Node y = x.right;
+        Node T2 = y.left;
+
+        // Perform rotation
+        y.left = x;
+        x.right = T2;
+
+        //  Update heights
+        x.height = Math.max(height(x.left), height(x.right))+1;
+        y.height = Math.max(height(y.left), height(y.right))+1;
+
+        // Return new root
+        return y;
+    }
+
+    // Get Balance factor of node N
+    private int getBalance(Node N) {
+        if (N == null)
+            return 0;
+        return height(N.left) - height(N.right);
+    }
+
+    public void preOrder(Node root) {
+        if (root != null) {
+            preOrder(root.left);
+            System.out.printf("%d ", root.elem);
+            preOrder(root.right);
+        }
     }
 
     //Getters
@@ -88,7 +149,7 @@ public class AVL {
      * @return nodo raiz
      */
     public Node getRaiz() {
-        return raiz;
+        return root;
     }
 
     //Métodos
@@ -97,7 +158,7 @@ public class AVL {
      */
     public void clear() {
         count = 0;
-        raiz = null;
+        root = null;
     }
 
     /**
@@ -114,38 +175,162 @@ public class AVL {
      * @return true se encontrou, null se o elemento não está na árvore
      */
     public boolean contains(Integer elem){
-        Node teste = searchNodeRef(elem, raiz);
+        Node teste = searchNodeRef(elem, root);
         return (teste != null);
     }
 
     /**
-     * Busca nodo contendo o element a partir do nodo alvo
-     * @param element
+     * Busca nodo contendo o.elem a partir do nodo alvo
+     * @param.elem
      * @param alvo
      * @return nodo encontrado ou null se não encontrar
      */
-    private Node searchNodeRef(Integer element, Node alvo) {
-        if (element == null || alvo == null)
+    private Node searchNodeRef(Integer elem, Node alvo) {
+        if (elem == null || alvo == null)
             return null;
-        if (element == alvo.elem)
+        if (elem == alvo.elem)
             return alvo;
-        if (element < alvo.elem)
-            return searchNodeRef(element, alvo.filhoE);
+        if (elem < alvo.elem)
+            return searchNodeRef(elem, alvo.left);
         else
-            return searchNodeRef(element, alvo.filhoD);
+            return searchNodeRef(elem, alvo.right);
     }
 
     public Node getParent(Integer elem){
-        Node filho = searchNodeRef(elem, raiz);
+        Node filho = searchNodeRef(elem, root);
         if(filho== null) return null;
-        return filho.pai;
+        return filho.father;
 
     }
 
-    private int height(Node node) {
-        return node != null ? node.height : -1;
-      }
+    public LinkedList<Integer> positionsPre() {
+        LinkedList<Integer> res = new LinkedList<>();
+        positionsPreAux(root, res);
+        return res;
+    }
 
+    private void positionsPreAux(Node n, LinkedList<Integer> res) {
+        if (n != null) {
+            res.add(n.elem); // Visita o nodo
+            positionsPreAux(n.left, res); // Visita a subárvore da esquerda
+            positionsPreAux(n.right, res); // Visita a subárvore da direita
+        }
+    }
 
-   
+    public LinkedList<Integer> positionsPos() {
+        LinkedList<Integer> res = new LinkedList<Integer>();
+        positionsPosAux(root, res);
+        return res;
+    }
+
+    private void positionsPosAux(Node n, LinkedList<Integer> res) {
+        if (n != null) {
+            positionsPosAux(n.left, res); // Visita a subárvore da esquerda
+            positionsPosAux(n.right, res); // Visita a subárvore da direita
+            res.add(n.elem); // Visita o nodo
+        }
+    }
+
+    public LinkedList positionsCentral() {
+        LinkedList<Integer> res = new LinkedList<Integer>();
+        positionsCentralAux(root, res);
+        return res;
+    }
+
+    private void positionsCentralAux(Node n, LinkedList<Integer> res) {
+        if (n != null) {
+            positionsCentralAux(n.left, res); // Visita a subárvore da esquerda
+            res.add(n.elem); // Visita o nodo
+            positionsCentralAux(n.right, res); // Visita a subárvore da direita
+        }
+    }
+
+    public LinkedList<Integer> positionsWidth() {
+        Queue<Node> fila = new Queue<>();
+        Node atual = null;
+        LinkedList<Integer> res = new LinkedList<Integer>();
+        if (root != null) {
+            fila.enqueue(root);
+            while (!fila.isEmpty()) {
+                atual = fila.dequeue();
+                if (atual.left != null) {
+                    fila.enqueue(atual.left);
+                }
+                if (atual.right != null) {
+                    fila.enqueue(atual.right);
+                }
+                res.add(atual.elem);
+            }
+        }
+        return res;
+    }
+
+    public AVL clone() {
+        AVL tree = new AVL();
+        clone(root, tree);
+        return tree;
+    }
+
+    private void clone(Node n, AVL tree) {
+        if (n != null) {
+            tree.add(n.elem); // Visita o nodo
+            clone(n.left, tree); // Visita a subárvore da esquerda
+            clone(n.right, tree); // Visita a subárvore da direita
+        }
+    }
+
+    private void GeraConexoesDOT(Node nodo) {
+        if (nodo == null) {
+            return;
+        }
+
+        GeraConexoesDOT(nodo.left);
+        // "nodeA":esq -> "nodeB" [color="0.650 0.700 0.700"]
+        if (nodo.left != null) {
+            System.out.println("\"node" + nodo.elem + "\":esq -> \"node" + nodo.left.elem + "\" " + "\n");
+        }
+
+        GeraConexoesDOT(nodo.right);
+        // "nodeA":dir -> "nodeB";
+        if (nodo.right != null) {
+            System.out.println("\"node" + nodo.elem + "\":dir -> \"node" + nodo.right.elem + "\" " + "\n");
+        }
+        // "[label = " << nodo->hDir << "]" <<endl;
+    }
+
+    private void GeraNodosDOT(Node nodo) {
+        if (nodo == null) {
+            return;
+        }
+        GeraNodosDOT(nodo.left);
+        // node10[label = "<esq> | 10 | <dir> "];
+        System.out.println("node" + nodo.elem + "[label = \"<esq> | " + nodo.elem + " | <dir> \"]" + "\n");
+        GeraNodosDOT(nodo.right);
+    }
+
+    public void GeraConexoesDOT() {
+        GeraConexoesDOT(root);
+    }
+
+    public void GeraNodosDOT() {
+        GeraNodosDOT(root);
+    }
+
+    // Gera uma saida no formato DOT
+    // Esta saida pode ser visualizada no GraphViz
+    // Versoes online do GraphViz pode ser encontradas em
+    // http://www.webgraphviz.com/
+    // http://viz-js.com/
+    // https://dreampuf.github.io/GraphvizOnline
+    public void GeraDOT() {
+        System.out.println("digraph g { \nnode [shape = record,height=.1];\n" + "\n");
+
+        GeraNodosDOT();
+        System.out.println("");
+        GeraConexoesDOT(root);
+        System.out.println("}" + "\n");
+    }
+
 }
+   
+
