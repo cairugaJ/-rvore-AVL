@@ -1,3 +1,4 @@
+import org.w3c.dom.Node;
 
 /**
  *
@@ -10,7 +11,7 @@ public class AVL {
     //Atributos
     private int count = 0;
 
-    private Nodo raiz = null;
+    private Node raiz = null;
 
      /**
      *
@@ -18,13 +19,13 @@ public class AVL {
      * @author  João Enrique Rego Cairuga
      * @version 2022-11-19
      */
-    private static final class Nodo{
+    private static final class Node{
         //Atributos
-        public Nodo pai;
+        public Node pai;
 
-        public Nodo filhoD;
+        public Node filhoD;
 
-        public Nodo filhoE;
+        public Node filhoE;
 
         public int height;
 
@@ -33,7 +34,7 @@ public class AVL {
         private int balan; //Checa se o nodo está balanceado
 
         //Construtor
-        public Nodo(Integer elem){
+        public Node(Integer elem){
             pai = null;
             filhoD = null;
             filhoE = null;
@@ -52,8 +53,8 @@ public class AVL {
      * @param element elemento a ser adicionado
      */
     public void add(int element) {
-        Nodo aux = searchNodeRef(element, raiz);
-
+        Node aux = new Node(element);
+        
         
     }
     
@@ -86,7 +87,7 @@ public class AVL {
      * Getter da raiz
      * @return nodo raiz
      */
-    public Nodo getRaiz() {
+    public Node getRaiz() {
         return raiz;
     }
 
@@ -113,7 +114,7 @@ public class AVL {
      * @return true se encontrou, null se o elemento não está na árvore
      */
     public boolean contains(Integer elem){
-        Nodo teste = searchNodeRef(elem, raiz);
+        Node teste = searchNodeRef(elem, raiz);
         return (teste != null);
     }
 
@@ -123,7 +124,7 @@ public class AVL {
      * @param alvo
      * @return nodo encontrado ou null se não encontrar
      */
-    private Nodo searchNodeRef(Integer element, Nodo alvo) {
+    private Node searchNodeRef(Integer element, Node alvo) {
         if (element == null || alvo == null)
             return null;
         if (element == alvo.elem)
@@ -134,14 +135,14 @@ public class AVL {
             return searchNodeRef(element, alvo.filhoD);
     }
 
-    public Nodo getParent(Integer elem){
-        Nodo filho = searchNodeRef(elem, raiz);
+    public Node getParent(Integer elem){
+        Node filho = searchNodeRef(elem, raiz);
         if(filho== null) return null;
         return filho.pai;
 
     }
 
-    private int height(Nodo node) {
+    private int height(Node node) {
         return node != null ? node.height : -1;
       }
 
